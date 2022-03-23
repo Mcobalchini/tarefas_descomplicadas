@@ -1,9 +1,11 @@
+import React from 'react';
+import { FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, ActivityIndicator, Alert } from 'react-native';
+import { AntDesign } from '@expo/vector-icons';
+import ToDoList from '../../components/ToDoList/ToDoList';
 import GetToDoListService from "../../service/GetToDoListService";
-import {Alert, FlatList} from "react-native";
-import ToDoList from "../../components/ToDoList/ToDoList";
-import {ActivityIndicator, SafeAreaView, Text} from "react-native-web";
 
 export default class HomeScreen extends React.Component {
+
     state = {
         isModalVisible: false,
         toDoLists: [],
@@ -12,60 +14,61 @@ export default class HomeScreen extends React.Component {
     };
 
     handleGetToDoList = async () => {
-        const getTodoListService = new GetToDoListService();
-        await getTodoListService.execute().then(todoLists => {
-            this.setState({todoLists, isLoading: false});
+        const getToDoListService = new GetToDoListService();
+        await getToDoListService.execute().then(toDoLists => {
+            this.setState({toDoLists, isLoading: false});
         }).catch((error) => {
-            Alert.alert("Erro", error.message());
+            Alert.alert("Erro", error.message);
         });
     }
 
     renderToDoList = ({item}) => (
-        <ToDoList toDoList={item} navigation={this.props.navigation} onGoBack={this.handleGetToDoList()}/>
+        <ToDoList toDoList={item} navigation={this.props.navigation} onGoBack={this.handleGetToDoList} />
     );
 
-    async componentAssembled() {
+    async componentDidMount() {
         await this.handleGetToDoList();
     }
 
     render() {
-        const navigation = this.props;
+
+        const {navigation} = this.props;
+
         if (this.state.isLoading) {
             return (
                 <View style={styles.container}>
-                    <ActivityIndicator size={"large"} color={"#00e88f"}/>
+                    <ActivityIndicator size={"large"} color={"#00e88f"} />
                 </View>
             );
         }
+
         return (
             <View style={styles.container}>
                 <View style={styles.titleArea}>
                     <Text style={styles.title}>Tarefas <Text style={styles.subtitle}>Descomplicadas</Text></Text>
                 </View>
                 <View style={{marginVertical: 50}}>
-                    <TouchableOpacity style={styles.addTaskButton}
-                                      onPress={() => navigation.navigate('AddToDoListScreen', {
-                                          onGoBack: this.handleGetToDoList
-                                      })}>
-                        <AntDesign name="plus" size={20} color={'#00e88f'}/>
-
+                    <TouchableOpacity style={styles.addTaskButton} onPress={() => navigation.navigate('AddToDoListScreen', {
+                        onGoBack: this.handleGetToDoList
+                    })}>
+                        <AntDesign name="plus" size={20} color={'#00e88f'} />
                     </TouchableOpacity>
                     <Text style={styles.addTaskButtonTitle}>Nova lista de tarefas</Text>
                 </View>
-                <SafeAreaView style={{height: 300, paddingLeft: 35}}>
+                <SafeAreaView style={{height: 300, paddingLeft: 0}}>
                     <FlatList
                         data={this.state.toDoLists}
                         keyExtractor={item => item.id.toString()}
                         horizontal={true}
                         showsHorizontalScrollIndicator={false}
                         renderItem={this.renderToDoList}
-                        keyboardShouldPersistTaps={"always"}
-                    />
+                        keyboardShouldPersistTaps="always" />
                 </SafeAreaView>
             </View>
-        )
+        );
     }
 }
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -99,4 +102,5 @@ const styles = StyleSheet.create({
         fontSize: 15,
         marginTop: 20
     }
+
 });

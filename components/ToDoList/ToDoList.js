@@ -1,6 +1,6 @@
 import React from 'react';
 import {StyleSheet, Text, View, TouchableOpacity, Alert} from 'react-native';
-import DeleteToDoListService from '../../services/DeleteToDoListService';
+import DeleteToDoListService from "../../service/DeleteToDoListService";
 
 export default class ToDoList extends React.Component {
     handleDeleteToDoList = (toDoList) => {

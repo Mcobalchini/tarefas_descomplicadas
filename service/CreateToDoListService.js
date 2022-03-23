@@ -1,5 +1,4 @@
 import FirebaseIntegration from "./FirebaseIntegration";
-import firebase from "firebase";
 
 export default class CreateToDoListService {
     execute(toDoList) {
